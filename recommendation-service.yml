@@ -1,0 +1,42 @@
+server:
+  port: 80
+
+spring:
+  zipkin:
+    base-url: ${gateway-auth}/cloud-zipkin-server/
+  sleuth:
+    sampler:
+      probability: 1.0
+  cloud:
+    azure:
+      servicebus:
+        # Snapshot
+        # connection-string: Endpoint=sb://hystrix-stream-snapshot.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=zQhaNkMU55O0sDtP3Bmakw2oTdY6Cj8UR4UP+i6hyvM=
+        # Stable
+        connection-string: Endpoint=sb://hystrix.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=hvmvgTyOcvNey7PKMN90cUkgT+YTAizpF0eTnipsZgI=
+
+hystrix:
+  stream:
+    queue:
+      send-id: false
+      destination: hystrixstreambackup
+      sendRate: 1700
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include:
+        - hystrix.stream
+        - health
+
+eureka:
+  instance:
+    lease-expiration-duration-in-seconds: 20
+    lease-renewal-interval-in-seconds: 20
+    prefer-ip-address: true
+
+logging:
+  level:
+    org.springframework.cloud: DEBUG
+    org.springframework.cloud.stream: INFO

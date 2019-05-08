@@ -1,0 +1,34 @@
+server:
+  port: 80
+
+spring:
+  zipkin:
+    base-url: ${gateway-auth}/cloud-zipkin-server/
+  sleuth:
+    sampler:
+      probability: 1.0
+  cloud:
+    gateway:
+      routes:
+      - id: recommendation-service
+        uri: lb://recommendation-service/
+        predicates:
+        - Path=/recommendation/**
+        filters:
+        - StripPrefix=1
+      - id: food-service
+        uri: lb://food-service/
+        predicates:
+        - Path=/food/**
+        filters:
+        - StripPrefix=1
+      - id: sms-service
+        uri: lb://sms-service/
+        predicates:
+        - Path=/sms/**
+
+eureka:
+  instance:
+    lease-expiration-duration-in-seconds: 20
+    lease-renewal-interval-in-seconds: 20
+    hostname: ${spring.application.name}
